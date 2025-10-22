@@ -1,0 +1,31 @@
+name: CI - Build (Linux)
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install build essentials
+        run: sudo apt-get update && sudo apt-get install -y build-essential
+
+      - name: Build (g++) 
+        # adjust compile command if your code needs extra flags or files
+        run: |
+          g++ -fopenmp ParallelCryptography.cpp -o parallel-cryptography -O2
+          file parallel-cryptography
+          ./parallel-cryptography --help || true
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: parallel-cryptography-binary
+          path: parallel-cryptography
