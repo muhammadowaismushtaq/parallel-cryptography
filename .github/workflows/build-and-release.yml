@@ -8,9 +8,6 @@ on:
   pull_request:
     branches: [ main ]
   workflow_dispatch:
-  push:
-    tags:
-      - 'v*.*.*'
 
 env:
   # Keep builds reproducible
