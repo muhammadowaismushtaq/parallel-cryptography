@@ -1,4 +1,4 @@
-name: CI - Build (Windows)
+name: Build (Windows, MSYS2)
 
 on:
   push:
@@ -8,21 +8,32 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
+  build-msys2:
     runs-on: windows-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Set up MinGW (for g++)
-        uses: egor-tensin/setup-mingw@v2
+      - name: Setup MSYS2
+        uses: msys2/setup-msys2@v2
         with:
-          platform: x64
+          msystem: MINGW64
+          update: true
+          install: >-
+            mingw-w64-x86_64-toolchain
+            mingw-w64-x86_64-openmp  # optional, if you need OpenMP lib
+      - name: Add mingw to PATH
+        shell: bash
+        run: echo "::add-path::/mingw64/bin"
 
-      - name: Build
+      - name: Build with g++
+        shell: bash
         run: |
-          g++ -fopenmp ParallelCryptography.cpp -o parallel-cryptography.exe -O2
-          dir
+          cd $GITHUB_WORKSPACE
+          # compile; adjust file name(s) / flags as needed
+          x86_64-w64-mingw32-g++ -fopenmp ParallelCryptography.cpp -O2 -o parallel-cryptography.exe
+          ls -l parallel-cryptography.exe
+          ./parallel-cryptography.exe || true
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
