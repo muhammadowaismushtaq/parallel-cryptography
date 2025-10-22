@@ -1,4 +1,4 @@
-name: CI - Build (Linux)
+name: CI - Build (Windows)
 
 on:
   push:
@@ -9,23 +9,23 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Install build essentials
-        run: sudo apt-get update && sudo apt-get install -y build-essential
+      - name: Set up MinGW (for g++)
+        uses: egor-tensin/setup-mingw@v2
+        with:
+          platform: x64
 
-      - name: Build (g++) 
-        # adjust compile command if your code needs extra flags or files
+      - name: Build
         run: |
-          g++ -fopenmp ParallelCryptography.cpp -o parallel-cryptography -O2
-          file parallel-cryptography
-          ./parallel-cryptography --help || true
+          g++ -fopenmp ParallelCryptography.cpp -o parallel-cryptography.exe -O2
+          dir
 
-      - name: Upload build artifact
+      - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: parallel-cryptography-binary
-          path: parallel-cryptography
+          name: parallel-cryptography-windows
+          path: parallel-cryptography.exe
