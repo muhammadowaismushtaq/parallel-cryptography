@@ -34,11 +34,8 @@ jobs:
         shell: bash
         run: |
           cd "$GITHUB_WORKSPACE"
-          # compile - adjust flags or extra files if needed
           g++ -fopenmp ParallelCryptography.cpp -O2 -o parallel-cryptography.exe
           ls -la parallel-cryptography.exe
-          # run with a harmless flag so output appears in logs (prevent CI failure if program returns nonzero)
-          ./parallel-cryptography.exe || true
 
       - name: Upload Windows artifact
         uses: actions/upload-artifact@v4
