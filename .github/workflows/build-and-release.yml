@@ -14,32 +14,6 @@ env:
   CXXFLAGS: -O2
 
 jobs:
-  # Build for Linux (runs on push/PR and tag)
-  build-linux:
-    name: Build (Linux)
-    runs-on: ubuntu-latest
-    outputs:
-      artifact-name: ${{ steps.upload.outputs.artifact-name }}
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup build deps
-        if: runner.os == 'Linux'
-        run: sudo apt-get update && sudo apt-get install -y build-essential
-
-      - name: Build (g++)
-        run: |
-          g++ -fopenmp ParallelCryptography.cpp -o parallel-cryptography-linux ${CXXFLAGS}
-          ls -la parallel-cryptography-linux
-
-      - name: Upload linux artifact
-        id: upload
-        uses: actions/upload-artifact@v4
-        with:
-          name: parallel-cryptography-linux
-          path: parallel-cryptography-linux
-
   # Build for Windows (MSYS2) (runs on push/PR and tag)
   build-windows:
     name: Build (Windows)
